@@ -18,20 +18,17 @@ body {
         linear-gradient(90deg, var(--secondary), transparent),
         linear-gradient(-90deg, var(--tertiary), transparent);
 }
-
 body:hover {
     --primary: #71bfb1;
     --secondary: #5fa195;
     --tertiary: #c55d00;
 }
-
 .palette {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 100px;
     justify-self: stretch;
 }
-
 .palette .primary {
     background-color: var(--primary);
 }
@@ -53,7 +50,6 @@ input {
     --bezel-bg: white;
     background-image: paint(bezel);
 }
-
 canvas {
     display: block;
     margin: 0 auto;

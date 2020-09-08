@@ -10,10 +10,6 @@ class Bezel {
     }
 
     paint(ctx, size, props) {
-        // console.log(props.get('--bezel-color'))
-        // console.log(props.get('--bezel-bg'))
-        // console.log(size)
-        
         ctx.lineWidth = props.get('--bezel-width')
         ctx.strokeStyle = props.get('--bezel-color')
         const inset = ctx.lineWidth / 2
