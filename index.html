@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeID</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="palette">
+        <div class="primary"></div>
+        <div class="secondary"></div>
+        <div class="tertiary"></div>
+    </div>
+    <form action="" id="form">
+        <canvas id="canvas" width="100" height="100">
+
+        </canvas>
+        <input type="text" placeholder="Name or ID" name="id" autocomplete="off" autofocus>
+    </form>
+    <!-- <button id="button">Vamo' a calmarno</button> -->
+    
+    <script>
+        window.CSS.registerProperty({
+            name: '--primary',
+            syntax: '<color>',
+            inherits: 'true',
+             initialValue: '#ffd924'
+        })
+        window.CSS.registerProperty({
+            name: '--secondary',
+            syntax: '<color>',
+            inherits: 'true',
+             initialValue: '#ffd924'
+        })
+        window.CSS.registerProperty({
+            name: '--tertiary',
+            syntax: '<color>',
+            inherits: 'true',
+             initialValue: '#ffd924'
+        })
+
+        window.CSS.paintWorklet.addModule('bezel.js');
+
+        form.addEventListener('submit', handleSubmit)
+
+        async function handleSubmit(event) {
+            event.preventDefault()
+            const data = new FormData(form)
+            const id = data.get('id')
+            const pokemon = await getPokemon(id)
+            renderPokemon(pokemon)
+        }
+        // Richiesta fetch per ottenere i dati json della API Pokemon
+        async function getPokemon(id) {
+            const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+            const pokemon = await res.json()
+            return pokemon
+        }
+
+        const ctx = canvas.getContext('2d')
+        const image = new Image()
+        image.setAttribute('crossOrigin', 'anonymous')
+        
+        // Stampa il pokemon all'interno del CANVAS
+        function renderPokemon(pokemon) {
+            image.setAttribute('src', pokemon.sprites.front_default)
+            image.addEventListener('load', () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height)
+                ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
+                const colors = getColorPalette(ctx)
+                updateProperties(colors)
+            })
+        }
+
+        // Scelta dei colori principali del Pokemon
+        function getColorPalette(ctx) {
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data
+            const quality = 90
+            const colors = []
+            for (let i = 0; i < canvas.width * canvas.height; i = i + quality) {
+                const offset = i * 4
+                const alpha = imgData[offset + 3]
+                if (alpha > 0 ) {
+                    const red = imgData[offset]
+                    const green = imgData[offset + 1]
+                    const blue = imgData[offset + 2]
+                    colors.push({red, green, blue})
+                }
+            }
+            return colors
+        }
+
+        // button.addEventListener('click', () => {
+        //     updateProperties(['#71bfb1', '#5fa195', '#c55d00'])
+        // })
+
+        // function updateProperties(colors) {
+        //     document.body.style.setProperty('--primary', colors[0]);
+        //     document.body.style.setProperty('--secondary', colors[1]);
+        //     document.body.style.setProperty('--tertiary', colors[2]);
+        // }
+
+        function updateProperties(colors) {
+            document.body.style.setProperty('--primary', `rgba(${colors[0].red} ${colors[0].green} ${colors[0].blue})`);
+            document.body.style.setProperty('--secondary', `rgba(${colors[1].red} ${colors[1].green} ${colors[1].blue})`);
+            document.body.style.setProperty('--tertiary', `rgba(${colors[2].red} ${colors[2].green} ${colors[2].blue})`);
+        }
+    </script>
+</body>
+</html>
