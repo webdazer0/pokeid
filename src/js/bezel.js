@@ -8,27 +8,28 @@ class Bezel {
   }
 
   parseValue(val) {
-    return val.toString().replace(" ", "").replace(/px|%/g, "").split(" ");
+    const values = val.toString().split(" ");
+    return values.map((el) => el.replace(/px|%/g, ""));
   }
 
   paint(ctx, size, props) {
     ctx.lineWidth = props.get("--bezel-width");
     ctx.strokeStyle = props.get("--bezel-color");
     const inset = ctx.lineWidth / 2;
-    const [topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius] =
-      this.parseValue(props.get("--bezel-radius"));
-
+    const [topLeft, topRight, bottomRight, bottomLeft] = this.parseValue(
+      props.get("--bezel-radius")
+    );
     const width = size.width;
     const height = size.height;
 
-    ctx.lineTo(topLeftRadius, inset);
-    ctx.lineTo(width - topRightRadius, inset);
-    ctx.lineTo(width - inset, topRightRadius);
-    ctx.lineTo(width - inset, height - bottomRightRadius);
-    ctx.lineTo(width - bottomRightRadius, height - inset);
-    ctx.lineTo(bottomLeftRadius, height - inset);
-    ctx.lineTo(inset, height - bottomLeftRadius);
-    ctx.lineTo(inset, topLeftRadius);
+    ctx.lineTo(topLeft, inset);
+    ctx.lineTo(width - topRight, inset);
+    ctx.lineTo(width - inset, topRight);
+    ctx.lineTo(width - inset, height - bottomRight);
+    ctx.lineTo(width - bottomRight, height - inset);
+    ctx.lineTo(bottomLeft, height - inset);
+    ctx.lineTo(inset, height - bottomLeft);
+    ctx.lineTo(inset, topLeft);
     ctx.closePath();
     ctx.fillStyle = props.get("--bezel-bg");
     ctx.fill();
